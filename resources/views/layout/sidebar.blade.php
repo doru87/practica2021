@@ -16,6 +16,9 @@
             <div class="info">
                 <a href="#" class="d-block">{{$user->name}}</a>
             </div>
+            <div class="info">
+                <a href="{{route('logout')}}"><i class="fas fa-sign-out-alt"></i></a>
+            </div>
         </div>
 
         <!-- Sidebar Menu -->

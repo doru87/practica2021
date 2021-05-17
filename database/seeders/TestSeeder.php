@@ -22,12 +22,12 @@ class TestSeeder extends Seeder
     public function run()
     {
         User::factory()
-            ->count(50)
+            ->count(4)
             ->has(
                 Board::factory()
                     ->count(3)
                     ->has(
-                        Task::factory()->count(10),
+                        Task::factory()->count(2),
                         'tasks'
                     ),
                 'createdBoards'

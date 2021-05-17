@@ -42,6 +42,7 @@ class Task extends Model
     const STATUS_CREATED = 0;
     const STATUS_IN_PROGRESS = 1;
     const STATUS_DONE = 2;
+    protected $fillable= ['id','board_id','name','description','assignment','status','created_at'];
 
     /** @var string */
     protected $table = 'tasks';
