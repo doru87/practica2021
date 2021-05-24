@@ -18,10 +18,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return redirect('login');
+    return redirect('api/login');
 });
 
-Route::match(['get', 'post'], '/login', [AuthController::class, 'login'])->name('login');
 Route::match(['get', 'post'], '/register', [AuthController::class, 'register'])->name('register');
 Route::get('/verify-email', [AuthController::class, 'verifyNotice'])->middleware('auth')->name('verification.notice');
 Route::get('verify-email/{id}/{hash}', [AuthController::class, 'verifyEmail'])->middleware(['auth', 'signed'])->name('verification.verify');
@@ -40,12 +39,4 @@ Route::middleware(['verified'])->group(function () {
         Route::post('/user/delete/{id}', [AdminController::class, 'deleteUser'])->name('users.delete');
     });
 
-    Route::get('/boards', [BoardController::class, 'boards'])->name('boards.all');
-    Route::post('/board/update/{id}', [BoardController::class, 'updateBoard'])->name('boards.update');
-    Route::post('/board/delete/{id}', [BoardController::class, 'deleteBoard'])->name('boards.delete');
-
-    Route::get('/board/{id}', [BoardController::class, 'board'])->name('board.view');
-
-    Route::post('/task/update/{id}', [BoardController::class, 'updateTask'])->name('tasks.update');
-    Route::post('/task/delete/{id}', [BoardController::class, 'deleteTask'])->name('tasks.delete');
 });

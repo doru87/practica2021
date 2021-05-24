@@ -31,6 +31,7 @@ class AuthService
         if (!$user || !Hash::check($request->input('password'), $user->password)) {
             return null;
         }
+        $user->createToken('app_token')->plainTextToken;
 
         $remember = $request->has('remember');
 

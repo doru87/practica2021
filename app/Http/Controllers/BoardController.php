@@ -6,6 +6,7 @@ use App\Models\Board;
 use App\Models\BoardUser;
 use App\Models\Task;
 use App\Models\User;
+use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -52,6 +53,24 @@ class BoardController extends Controller
             ]
         );
     }
+
+    public function addBoard(Request $request){
+
+        $user = Auth::user();
+        $error = '';
+ 
+        try {
+            $board = new Board();
+            $board->name = $request->get('name'); 
+            $board->user_id = $user->id;
+            $board->save();
+            $success = 'Board added';
+        } catch (Exception $e) {
+            $error = $e->getMessage();
+        }
+
+         return response()->json(['error' => $error, 'success' => $success]);
+    } 
 
     /**
      * @param  Request  $request
@@ -147,7 +166,7 @@ class BoardController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
-
+        $allUsers = User::all();
         $boards = Board::query();
 
         if ($user->role === User::ROLE_USER) {
@@ -178,9 +197,29 @@ class BoardController extends Controller
                 'board' => $board,
                 'boards' => $boards,
                 'tasks' => $tasks,
-                'boardUsers' => $boardUsers
+                'boardUsers' => $boardUsers,
+                'allUsers' =>$allUsers
             ]
         );
+    }
+
+    public function addTask(Request $request){
+
+        $error = '';
+        try {
+            $task = new Task();
+            $task->board_id = $request->get('boardId');
+            $task->name = $request->get('name'); 
+            $task->description = $request->get('description');
+            $task->assignment = $request->get('assignment');
+            $task->status = $request->get('status');
+            $task->save();
+            $success = 'Task added';
+            
+        } catch (Exception $e) {
+            $error = $e->getMessage();
+        }
+         return response()->json(['error' => $error, 'success' => $success]);
     }
 
     /**
@@ -197,13 +236,13 @@ class BoardController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        $boardUser = BoardUser::where('board_id', $task->board_id)->where('user_id', $user->id)->first();
+        // $boardUser = BoardUser::where('board_id', $task->board_id)->where('user_id', $user->id)->first();
 
         $error = '';
         $success = '';
 
         if ($task) {
-            if ($boardUser) {
+            // if ($boardUser) {
                 $task->name = $request->get('name');
                 $task->description = $request->get('description');
                 $task->assignment = $request->get('assignment');
@@ -211,9 +250,9 @@ class BoardController extends Controller
                 $task->save();
 
                 $success = 'Task saved';
-            } else {
-                $error = 'You don\'t have permission to edit this task!';
-            }
+            // } else {
+            //     $error = 'You don\'t have permission to edit this task!';
+            // }
         } else {
             $error = 'Task not found!';
         }
@@ -251,4 +290,5 @@ class BoardController extends Controller
 
         return response()->json(['error' => $error, 'success' => $success]);
     }
+
 }

@@ -15,7 +15,7 @@ use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
-
+use Laravel\Sanctum\HasApiTokens;
 /**
  * App\Models\User
  *
@@ -52,7 +52,7 @@ use Illuminate\Support\Carbon;
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens,HasFactory, Notifiable;
 
     const ROLE_USER = 0;
     const ROLE_ADMIN = 1;
