@@ -1,21 +1,20 @@
-window._ = require("lodash");
+window._ = require('lodash');
 
 try {
-    window.Popper = require("popper.js").default;
-    window.$ = window.jQuery = require("jquery");
+    window.Popper = require('popper.js').default;
+    window.$ = window.jQuery = require('jquery');
 
     $.ajaxSetup({
         headers: {
-            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-        },
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
     });
 
-    require("bootstrap");
-    require("admin-lte");
-    require("admin-lte/plugins/select2/js/select2.full.min.js");
-    require("jquery-datetimepicker/build/jquery.datetimepicker.full.js");
-    require("jquery-ui/ui/widgets/datepicker.js");
-} catch (e) {}
+    require('bootstrap');
+    require('select2');
+    require('admin-lte');
+} catch (e) {
+}
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
@@ -23,9 +22,9 @@ try {
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-window.axios = require("axios");
+window.axios = require('axios');
 
-window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening

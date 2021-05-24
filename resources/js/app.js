@@ -1,2 +1,3 @@
-require("./bootstrap");
-require("./custom");
+require('./bootstrap');
+
+require('./custom');

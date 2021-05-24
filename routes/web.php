@@ -4,7 +4,6 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -44,12 +43,9 @@ Route::middleware(['verified'])->group(function () {
     Route::get('/boards', [BoardController::class, 'boards'])->name('boards.all');
     Route::post('/board/update/{id}', [BoardController::class, 'updateBoard'])->name('boards.update');
     Route::post('/board/delete/{id}', [BoardController::class, 'deleteBoard'])->name('boards.delete');
+
     Route::get('/board/{id}', [BoardController::class, 'board'])->name('board.view');
 
-    Route::post('/task/name/update/{id}',[TaskController::class,'updateTaskName'])->name('tasks.name.update');
-    Route::post('/task/description/update/{id}',[TaskController::class,'updateTaskDescription'])->name('tasks.description.update');
-    Route::post('/task/assignment/update/{id}',[TaskController::class,'updateTaskAssignment'])->name('tasks.assignment.update');
-    Route::post('/task/status/update/{id}',[TaskController::class,'updateTaskStatus'])->name('tasks.status.update');
-    Route::post('/task/datecreation/update/{id}',[TaskController::class,'updateTaskDateCreation'])->name('tasks.datecreation.update');
-    Route::post('/task/delete/{id}',[TaskController::class,'deleteTask'])->name('tasks.delete');
+    Route::post('/task/update/{id}', [BoardController::class, 'updateTask'])->name('tasks.update');
+    Route::post('/task/delete/{id}', [BoardController::class, 'deleteTask'])->name('tasks.delete');
 });

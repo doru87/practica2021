@@ -1,339 +1,210 @@
 //CUSTOM JS
-$("#userEditModal").on("shown.bs.modal", function (event) {
+$('#userEditModal').on('shown.bs.modal', function(event) {
     let button = $(event.relatedTarget); // Button that triggered the modal
-    let user = button.data("user");
+    let user = button.data('user');
 
     let modal = $(this);
 
-    modal.find("#userEditId").val(user.id);
-    modal.find("#userEditName").text(user.name);
-    modal.find("#userEditRole").val(user.role);
+    modal.find('#userEditId').val(user.id);
+    modal.find('#userEditName').text(user.name);
+    modal.find('#userEditRole').val(user.role);
 });
 
-$("#changeBoard").on("change", function () {
-    let id = $(this).val();
-    window.location.href = "/board/" + id;
-});
-/***************************************************/
-/***************************************************/
-$("#userEditModalAjax").on("shown.bs.modal", function (event) {
+$('#userEditModalAjax').on('shown.bs.modal', function(event) {
     let button = $(event.relatedTarget); // Button that triggered the modal
-    let user = button.data("user");
+    let user = button.data('user');
 
     let modal = $(this);
 
-    modal.find("#userEditIdAjax").val(user.id);
-    modal.find("#userEditNameAjax").text(user.name);
-    modal.find("#userEditRoleAjax").val(user.role);
+    modal.find('#userEditIdAjax').val(user.id);
+    modal.find('#userEditNameAjax').text(user.name);
+    modal.find('#userEditRoleAjax').val(user.role);
 });
 
-$("#userEditButtonAjax").on("click", function () {
-    $("#userEditAlert").addClass("hidden");
+$('#userDeleteModal').on('shown.bs.modal', function(event) {
+    let button = $(event.relatedTarget); // Button that triggered the modal
+    let user = button.data('user');
 
-    let id = $("#userEditIdAjax").val();
-    let role = $("#userEditRoleAjax").val();
+    let modal = $(this);
 
-    $.ajax({
-        method: "POST",
-        url: "/user-update/" + id,
-        data: { role: role },
-    }).done(function (response) {
-        if (response.error !== "") {
-            $("#userEditAlert").text(response.error).removeClass("hidden");
-        } else {
-            window.location.reload();
-        }
+    modal.find('#userDeleteId').val(user.id);
+    modal.find('#userDeleteName').text(user.name);
+});
+
+$('#boardEditModal').on('shown.bs.modal', function(event) {
+    let button = $(event.relatedTarget); // Button that triggered the modal
+    let board = button.data('board');
+
+    let modal = $(this);
+
+    modal.find('#boardEditId').val(board.id);
+    modal.find('#boardEditName').val(board.name);
+
+    let usersSelected = [];
+
+    board.board_users.forEach(function(boardUser) {
+        usersSelected.push(boardUser.user_id);
     });
+
+    modal.find('#boardEditUsers').val(usersSelected);
+    modal.find('#boardEditUsers').trigger('change');
 });
-/***************************************************/
-/***************************************************/
-$("#userDeleteModal").on("shown.bs.modal", function (event) {
+
+$('#boardDeleteModal').on('shown.bs.modal', function(event) {
     let button = $(event.relatedTarget); // Button that triggered the modal
-    let user = button.data("user");
+    let board = button.data('board');
 
     let modal = $(this);
 
-    modal.find("#userDeleteId").val(user.id);
-    modal.find("#userDeleteName").text(user.name);
+    modal.find('#boardDeleteId').val(board.id);
+    modal.find('#boardDeleteName').text(board.name);
 });
 
-$("#userDeleteButton").on("click", function () {
-    $("#userDeleteAlert").addClass("hidden");
-    let id = $("#userDeleteId").val();
-
-    $.ajax({
-        method: "POST",
-        url: "/user/delete/" + id,
-    }).done(function (response) {
-        if (response.error !== "") {
-            $("#userDeleteAlert").text(response.error).removeClass("hidden");
-        } else {
-            window.location.reload();
-        }
-    });
-});
-/***************************************************/
-/***************************************************/
-const removedUsers = [];
-$("#boardEditModal").on("shown.bs.modal", function (event) {
-    let button = $(event.relatedTarget);
+$('#taskEditModal').on('shown.bs.modal', function(event) {
+    let button = $(event.relatedTarget); // Button that triggered the modal
+    let task = button.data('task');
 
     let modal = $(this);
 
-    let board = button.data("board");
-    modal.find("#boardEditId").val(board.id);
-    modal.find("#boardEditName").val(board.name);
-    let users = button.data("users");
+    modal.find('#taskEditId').val(task.id);
+    modal.find('#taskEditName').val(task.name);
+    modal.find('#taskEditDescription').text(task.description);
+    modal.find('#taskEditAssignment').val(task.assignment ? task.assignment : '');
+    modal.find('#taskEditStatus').val(task.status);
+});
 
-    $("#usersAssigned").val(users);
-    $("#usersAssigned").trigger("change");
+$('#taskDeleteModal').on('shown.bs.modal', function(event) {
+    let button = $(event.relatedTarget); // Button that triggered the modal
+    let task = button.data('task');
 
-    document
-        .querySelectorAll(".select2-selection__choice")
-        .forEach(function (element) {
-            element.addEventListener("click", function (event) {
-                var userTitle = element.getAttribute("title");
-                removedUsers.push(userTitle);
-            });
+    let modal = $(this);
+
+    modal.find('#taskDeleteId').val(task.id);
+    modal.find('#taskDeleteName').text(task.name);
+});
+
+$(document).ready(function() {
+    $('#userEditButtonAjax').on('click', function() {
+        $('#userEditAlert').addClass('hidden');
+
+        let id = $('#userEditIdAjax').val();
+        let role = $('#userEditRoleAjax').val();
+
+        $.ajax({
+            method: 'POST',
+            url: '/user-update/' + id,
+            data: {role: role}
+        }).done(function(response) {
+            if (response.error !== '') {
+                $('#userEditAlert').text(response.error).removeClass('hidden');
+            } else {
+                window.location.reload();
+            }
         });
-});
-
-$("#boardEditButton").on("click", function () {
-    let id = $("#boardEditId").val();
-    let name = $("#boardEditName").val();
-    var users = [];
-    $("#usersAssigned").each(function () {
-        users.push($(this).val());
-    });
-    users = Array.prototype.concat.apply([], users);
-
-    $.ajax({
-        method: "POST",
-        url: "/board/update/" + id,
-        data: {
-            name: name,
-            users: users,
-            removedUsers: removedUsers,
-        },
-    }).done(function (response) {
-        if (response.error !== "") {
-            $("#boardEditAlert").text(response.error).removeClass("hidden");
-        } else {
-            window.location.reload();
-        }
-    });
-});
-/***************************************************/
-/***************************************************/
-$("#boardDeleteModal").on("shown.bs.modal", function (event) {
-    let button = $(event.relatedTarget);
-    let board = button.data("board");
-
-    let modal = $(this);
-
-    modal.find("#boardDeleteId").val(board.id);
-    modal.find("#boardDeleteName").text(board.name);
-});
-
-$("#boardDeleteButton").on("click", function () {
-    let id = $("#boardDeleteId").val();
-
-    $.ajax({
-        method: "POST",
-        url: "/board/delete/" + id,
-    }).done(function (response) {
-        if (response.error !== "") {
-            $("#boardDeleteAlert").text(response.error).removeClass("hidden");
-        } else {
-            window.location.reload();
-        }
-    });
-});
-/***************************************************/
-/***************************************************/
-$(".taskAssignment").on("click", function (event) {
-    const data1 = $(this).attr("data-task");
-    const task = JSON.parse(data1);
-    $("#boardEditId").val(task.board_id);
-    $("#taskEditId").val(task.id);
-
-    const data2 = $(this).attr("data-user");
-    const user = JSON.parse(data2);
-
-    $("#userAssigned").val(user);
-
-    $("#userAssigned").trigger("change");
-
-    $("#taskAssignmentModal").modal("show");
-});
-
-$("#taskAssignmentButton").on("click", function () {
-    let id = $("#taskEditId").val();
-    let userAssignedId = $("#userAssigned").val();
-
-    $.ajax({
-        method: "POST",
-        url: "/task/assignment/update/" + id,
-        data: { userAssignedId: userAssignedId },
-    }).done(function (response) {
-        if (response.error !== "") {
-            $("#taskEditAlert").text(response.error).removeClass("hidden");
-        } else {
-            window.location.reload();
-        }
-    });
-});
-/***************************************************/
-/***************************************************/
-$(".taskName").on("click", function (event) {
-    const data = $(this).attr("data-task");
-    const task = JSON.parse(data);
-
-    $("#taskEditName").val(task.name);
-    $("#taskEditId").val(task.id);
-    $("#taskNameModal").modal("show");
-});
-
-$("#taskNameButton").on("click", function () {
-    let id = $("#taskEditId").val();
-    let taskEditName = $("#taskEditName").val();
-
-    $.ajax({
-        method: "POST",
-        url: "/task/name/update/" + id,
-        data: { taskEditName: taskEditName },
-    }).done(function (response) {
-        if (response.error !== "") {
-            $("#taskEditAlert").text(response.error).removeClass("hidden");
-        } else {
-            window.location.reload();
-        }
-    });
-});
-/***************************************************/
-/***************************************************/
-$(".taskDescription").on("click", function (event) {
-    const data = $(this).attr("data-task");
-    const task = JSON.parse(data);
-
-    $("#taskEditId").val(task.id);
-    $("#taskEditDescription").val(task.description);
-    $("#taskDescriptionModal").modal("show");
-});
-
-$("#taskDescriptionButton").on("click", function () {
-    let id = $("#taskEditId").val();
-    let taskEditDescription = $("#taskEditDescription").val();
-
-    $.ajax({
-        method: "POST",
-        url: "/task/description/update/" + id,
-        data: { taskEditDescription: taskEditDescription },
-    }).done(function (response) {
-        if (response.error !== "") {
-            $("#taskEditAlert").text(response.error).removeClass("hidden");
-        } else {
-            window.location.reload();
-        }
-    });
-});
-/***************************************************/
-/***************************************************/
-$(".taskStatus").on("click", function (event) {
-    const data1 = $(this).attr("data-task");
-    const task = JSON.parse(data1);
-
-    $("#status").val(task.status);
-    $("#taskEditId").val(task.id);
-    $("#status").trigger("change");
-    $("#taskStatusModel").modal("show");
-});
-
-$("#taskStatusButton").on("click", function () {
-    let id = $("#taskEditId").val();
-    let statusId = $("#status").val();
-
-    $.ajax({
-        method: "POST",
-        url: "/task/status/update/" + id,
-        data: { statusId: statusId },
-    }).done(function (response) {
-        if (response.error !== "") {
-            $("#taskEditAlert").text(response.error).removeClass("hidden");
-        } else {
-            window.location.reload();
-        }
-    });
-});
-/***************************************************/
-/***************************************************/
-$(".taskDateCreation").on("click", function (event) {
-    const data1 = $(this).attr("data-task");
-    const task = JSON.parse(data1);
-
-    $("#taskEditId").val(task.id);
-    var $startDate = $("#datetimepicker");
-    $startDate.datetimepicker({
-        value: task.created_at,
     });
 
-    $startDate.on("change", function () {
-        var selectedDate = $("#datetimepicker").val();
-        $("#selectedDateTime").val(selectedDate);
+    $('#userDeleteButton').on('click', function() {
+        $('#userDeleteAlert').addClass('hidden');
+        let id = $('#userDeleteId').val();
+
+        $.ajax({
+            method: 'POST',
+            url: '/user/delete/' + id
+        }).done(function(response) {
+            if (response.error !== '') {
+                $('#userDeleteAlert').text(response.error).removeClass('hidden');
+            } else {
+                window.location.reload();
+            }
+        });
     });
 
-    $("#taskDateCreationModel").modal("show");
-});
+    $('#changeBoard').on('change', function() {
+        let id = $(this).val();
 
-$("#taskDateCreationButton").on("click", function () {
-    let id = $("#taskEditId").val();
-    let selectedDateTime = $("#selectedDateTime").val();
-    finalSelectedDateTime = selectedDateTime + ":00";
-
-    $.ajax({
-        method: "POST",
-        url: "/task/datecreation/update/" + id,
-        data: { selectedDateTime: finalSelectedDateTime },
-    }).done(function (response) {
-        if (response.error !== "") {
-            $("#taskEditAlert").text(response.error).removeClass("hidden");
-        } else {
-            window.location.reload();
-        }
+        window.location.href = '/board/' + id;
     });
-});
-/***************************************************/
-/***************************************************/
-$("#taskDeleteModal").on("shown.bs.modal", function (event) {
-    let button = $(event.relatedTarget); // Button that triggered the modal
-    let task = button.data("task");
 
-    let modal = $(this);
+    $('#boardEditUsers').select2();
 
-    modal.find("#taskDeleteId").val(task.id);
-    modal.find("#taskDeleteName").text(task.name);
-});
+    $('#boardEditButton').on('click', function() {
+        $('#boardEditAlert').addClass('hidden');
 
-$("#taskDeleteButton").on("click", function () {
-    let id = $("#taskDeleteId").val();
+        let id = $('#boardEditId').val();
+        let name = $('#boardEditName').val();
+        let boardUsersData = $('#boardEditUsers').select2('data');
 
-    $.ajax({
-        method: "POST",
-        url: "/task/delete/" + id,
-    }).done(function (response) {
-        if (response.error !== "") {
-            $("#taskDeleteAlert").text(response.error).removeClass("hidden");
-        } else {
-            window.location.reload();
-        }
+        let boardUsers = [];
+
+        boardUsersData.forEach(function(item) {
+            boardUsers.push(item.id);
+        });
+
+        $.ajax({
+            method: 'POST',
+            url: '/board/update/' + id,
+            data: {name, boardUsers}
+        }).done(function(response) {
+            if (response.error !== '') {
+                $('#boardEditAlert').text(response.error).removeClass('hidden');
+            } else {
+                window.location.reload();
+            }
+        });
     });
-});
-/***************************************************/
-/***************************************************/
-$(".select2").select2();
 
-$(".select2bs4").select2({
-    theme: "bootstrap4",
-});
+    $('#boardDeleteButton').on('click', function() {
+        $('#boardDeleteAlert').addClass('hidden');
+        let id = $('#boardDeleteId').val();
 
-$('[data-bs-toggle="tooltip"]').tooltip();
+        $.ajax({
+            method: 'POST',
+            url: '/board/delete/' + id
+        }).done(function(response) {
+            if (response.error !== '') {
+                $('#boardDeleteAlert').text(response.error).removeClass('hidden');
+            } else {
+                window.location.reload();
+            }
+        });
+    });
+
+    $('#taskEditButton').on('click', function() {
+        $('#taskEditAlert').addClass('hidden');
+
+        let id = $('#taskEditId').val();
+        let name = $('#taskEditName').val();
+        let description = $('#taskEditDescription').text();
+        let assignment = $('#taskEditAssignment').val();
+        let status = $('#taskEditStatus').val();
+
+        $.ajax({
+            method: 'POST',
+            url: '/task/update/' + id,
+            data: {name, description, assignment, status}
+        }).done(function(response) {
+            if (response.error !== '') {
+                $('#taskEditAlert').text(response.error).removeClass('hidden');
+            } else {
+                window.location.reload();
+            }
+        });
+    });
+
+    $('#taskDeleteButton').on('click', function() {
+        $('#taskDeleteAlert').addClass('hidden');
+        let id = $('#taskDeleteId').val();
+
+        $.ajax({
+            method: 'POST',
+            url: '/task/delete/' + id
+        }).done(function(response) {
+            if (response.error !== '') {
+                $('#taskDeleteAlert').text(response.error).removeClass('hidden');
+            } else {
+                window.location.reload();
+            }
+        });
+    });
+
+});
